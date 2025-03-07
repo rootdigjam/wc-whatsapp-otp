@@ -537,7 +537,7 @@ class WC_WhatsApp_OTP_Verification
                             if (response.success) {
                                 // alert('OTP sent to your WhatsApp number');
                                 // Show success message
-                                $('form.checkout .form-row.otp-field').before('<div class="woocommerce-message" role="alert">' + (response.data.message || 'OTP sent successfully') + '</div>');
+                                $('form.checkout .form-row.otp-field').before('<div class="woocommerce-message" role="alert">' + (response.data.message || 'OTP sent on WhatsApp successfully') + '</div>');
                                 // startOTPTimer();
                             } else {
                                 // alert('Failed to send OTP. Please try again.');
@@ -808,7 +808,7 @@ class WC_WhatsApp_OTP_Verification
 
         // Success response
         wp_send_json_success(array(
-            'message' => 'OTP sent successfully'
+            'message' => 'OTP sent on WhatsApp successfully'
         ));
     }
 
