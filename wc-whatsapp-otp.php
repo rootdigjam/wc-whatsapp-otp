@@ -423,13 +423,37 @@ class WC_WhatsApp_OTP_Verification
                     $('#billing_phone').attr('placeholder', '+91XXXXXXXXXX');
                 }
 
-                function startOTPTimer() {
-                    let seconds = 30;
-                    $('#send-otp').hide();
-                    $('#resend-otp').show().prop('disabled', true).text(`Resend OTP in ${seconds}s`);
+                // Declare a global variable for the timer to avoid scope issues
+                // let otpTimer;
 
+                function startOTPTimer() {
+                    // Clear any existing timer to prevent multiple timers running
+                    if (otpTimer) {
+                        clearInterval(otpTimer);
+                    }
+
+                    let seconds = 30;
+
+                    // Make sure elements exist before trying to manipulate them
+                    if ($('#send-otp').length) {
+                        $('#send-otp').hide();
+                    }
+
+                    if ($('#resend-otp').length) {
+                        $('#resend-otp')
+                            .show()
+                            .prop('disabled', true)
+                            .text(`Resend OTP in ${seconds}s`);
+                    } else {
+                        console.error("Element with ID 'resend-otp' not found");
+                        return; // Exit the function if the element doesn't exist
+                    }
+
+                    // Create the timer
                     otpTimer = setInterval(function() {
                         seconds--;
+                        console.log("Timer: " + seconds); // Debug logging
+
                         if (seconds <= 0) {
                             clearInterval(otpTimer);
                             $('#resend-otp').prop('disabled', false).text('Resend OTP');
@@ -440,9 +464,18 @@ class WC_WhatsApp_OTP_Verification
                 }
 
                 function stopOTPTimer() {
-                    // $('#resend-otp').hide();
-                    // $('#send-otp').show();
-                    $('#resend-otp').prop('disabled', false).text('Resend OTP');
+                    // Always clear the interval when stopping the timer
+                    if (otpTimer) {
+                        clearInterval(otpTimer);
+                    }
+
+                    if ($('#resend-otp').length) {
+                        $('#resend-otp').prop('disabled', false).text('Resend OTP');
+                    }
+
+                    // Uncomment these if you want to show the send-otp button again
+                    // if ($('#resend-otp').length) $('#resend-otp').hide();
+                    // if ($('#send-otp').length) $('#send-otp').show();
                 }
 
                 $('#send-otp, #resend-otp').click(function() {
@@ -505,7 +538,7 @@ class WC_WhatsApp_OTP_Verification
                                 // alert('OTP sent to your WhatsApp number');
                                 // Show success message
                                 $('form.checkout .form-row.otp-field').before('<div class="woocommerce-message" role="alert">' + (response.data.message || 'OTP sent successfully') + '</div>');
-                                startOTPTimer();
+                                // startOTPTimer();
                             } else {
                                 // alert('Failed to send OTP. Please try again.');
                                 // Show error at the top
